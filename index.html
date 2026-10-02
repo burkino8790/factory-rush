@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Factory Rush</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --card2:#273449; --text:#f1f5f9; --muted:#94a3b8;
+    --accent:#f59e0b; --accent2:#fb923c; --green:#22c55e; --blue:#38bdf8; --red:#ef4444;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100%}
+  body{padding:env(safe-area-inset-top) 14px calc(env(safe-area-inset-bottom) + 20px);max-width:520px;margin:0 auto;
+    background:radial-gradient(circle at 50% -10%,#1e3a5f 0%,var(--bg) 55%)}
+  header{text-align:center;padding:18px 0 12px}
+  h1{font-size:2rem;font-weight:900;letter-spacing:1px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:.85rem;margin-top:2px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .stat{background:var(--card);border-radius:16px;padding:14px;border:1px solid rgba(255,255,255,.06)}
+  .stat .label{color:var(--muted);font-size:.78rem;margin-bottom:4px}
+  .stat .value{font-size:1.3rem;font-weight:800}
+  .stat.wide{grid-column:span 2}
+  .money{color:var(--green)}
+  .profit{color:var(--blue)}
+  .factory{background:var(--card);border-radius:20px;padding:18px;margin:6px 0 12px;text-align:center;border:1px solid rgba(255,255,255,.06)}
+  .machine{font-size:4rem;display:inline-block;line-height:1}
+  .machine.running{animation:shake .35s infinite}
+  @keyframes shake{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-3deg)}75%{transform:translate(2px,-1px) rotate(3deg)}}
+  .gears{font-size:1.6rem;height:2rem;margin-top:4px}
+  .gears span{display:inline-block}
+  .running ~ .gears span{animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .progress{height:16px;background:#0b1220;border-radius:99px;overflow:hidden;margin-top:12px}
+  .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}
+  .status{margin-top:8px;color:var(--muted);font-size:.9rem;min-height:1.2em}
+  button{width:100%;border:none;border-radius:18px;font-weight:800;color:#fff;cursor:pointer;
+    font-family:inherit;transition:transform .08s,opacity .2s}
+  button:active:not(:disabled){transform:scale(.97)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  #produceBtn{padding:24px 12px;font-size:1.4rem;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 8px 24px rgba(245,158,11,.35);margin-bottom:10px;min-height:76px;color:#1a1100}
+  #upgradeBtn{padding:16px 12px;font-size:1.05rem;background:linear-gradient(135deg,#0ea5e9,#6366f1);
+    box-shadow:0 6px 18px rgba(99,102,241,.3);min-height:64px;margin-bottom:14px}
+  #upgradeBtn small{display:block;font-weight:600;opacity:.9;margin-top:3px;font-size:.8rem}
+  .history{background:var(--card);border-radius:18px;padding:14px;border:1px solid rgba(255,255,255,.06)}
+  .history h2{font-size:1rem;margin-bottom:10px}
+  .item{display:flex;justify-content:space-between;align-items:center;background:var(--card2);
+    border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:.88rem;animation:pop .3s}
+  @keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .item .l{display:flex;flex-direction:column;gap:2px}
+  .item .t{color:var(--muted);font-size:.72rem}
+  .item .g{color:var(--green);font-weight:800}
+  .empty{color:var(--muted);text-align:center;padding:10px;font-size:.9rem}
+  .reset{background:transparent;color:var(--muted);font-size:.8rem;font-weight:600;padding:12px;margin-top:10px}
+  #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translate(-50%,40px);
+    background:#0b1220;border:1px solid rgba(255,255,255,.15);padding:12px 18px;border-radius:14px;
+    opacity:0;transition:.3s;font-weight:700;pointer-events:none;max-width:90%;text-align:center}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+  <header>
+    <h1>🏭 Factory Rush</h1>
+    <div class="sub">Fabrikanı kur, büyüt, kazan!</div>
+  </header>
+
+  <div class="grid">
+    <div class="stat wide"><div class="label">💰 Para</div><div class="value money" id="money">10.000 €</div></div>
+    <div class="stat"><div class="label">📦 Stok</div><div class="value" id="stock">0</div></div>
+    <div class="stat"><div class="label">⭐ Kalite</div><div class="value" id="quality">100</div></div>
+    <div class="stat"><div class="label">⚡ Üretim hızı</div><div class="value" id="speed">x1.0</div></div>
+    <div class="stat"><div class="label">📈 Günlük kâr</div><div class="value profit" id="daily">0 €</div></div>
+  </div>
+
+  <div class="factory">
+    <div class="machine" id="machine">⚙️</div>
+    <div class="gears"><span>⚙️</span> <span>🔩</span> <span>⚙️</span></div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="status" id="status">Üretime hazır</div>
+  </div>
+
+  <button id="produceBtn">▶ ÜRETİME BAŞLA</button>
+  <button id="upgradeBtn">🔧 Makineyi Geliştir<small id="upgradeInfo"></small></button>
+
+  <div class="history">
+    <h2>📜 Üretim Geçmişi</h2>
+    <div id="history"></div>
+  </div>
+
+  <button class="reset" id="resetBtn">Oyunu sıfırla</button>
+  <div id="toast"></div>
+
+<script>
+(function(){
+  const SAVE_KEY = "factoryRushSave_v1";
+  const PRODUCTION_MS = 5000;
+  const UNIT_PRICE = 20;
+  const BASE_UNITS = 10;
+
+  const defaults = () => ({
+    money: 10000, stock: 0, quality: 100, level: 1,
+    history: [], dailyProfit: 0, dailyDate: today()
+  });
+
+  function today(){ return new Date().toISOString().slice(0,10); }
+
+  let state = load();
+  let producing = false;
+
+  const $ = id => document.getElementById(id);
+  const el = {
+    money:$("money"), stock:$("stock"), quality:$("quality"), speed:$("speed"), daily:$("daily"),
+    bar:$("bar"), status:$("status"), machine:$("machine"), produce:$("produceBtn"),
+    upgrade:$("upgradeBtn"), upInfo:$("upgradeInfo"), history:$("history"), toast:$("toast"), reset:$("resetBtn")
+  };
+
+  function load(){
+    try{
+      const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+      if(s && typeof s.money === "number") return Object.assign(defaults(), s);
+    }catch(e){}
+    return defaults();
+  }
+  function save(){
+    try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  const fmt = n => Math.round(n).toLocaleString("tr-TR") + " €";
+  const upgradeCost = () => Math.round(1000 * Math.pow(1.6, state.level - 1));
+  const unitsPerBatch = () => BASE_UNITS * state.level;
+  const minQuality = () => Math.min(95, 60 + (state.level - 1) * 4);
+
+  function checkNewDay(){
+    if(state.dailyDate !== today()){ state.dailyDate = today(); state.dailyProfit = 0; }
+  }
+
+  function render(){
+    checkNewDay();
+    el.money.textContent = fmt(state.money);
+    el.stock.textContent = state.stock.toLocaleString("tr-TR");
+    el.quality.textContent = state.quality;
+    el.speed.textContent = "x" + state.level.toFixed(1);
+    el.daily.textContent = fmt(state.dailyProfit);
+    const cost = upgradeCost();
+    el.upInfo.textContent = "Seviye " + state.level + " → " + (state.level+1) + " • " + fmt(cost);
+    el.upgrade.disabled = producing || state.money < cost;
+    el.produce.disabled = producing;
+    el.history.innerHTML = state.history.length ? "" : '<div class="empty">Henüz üretim yapılmadı</div>';
+    state.history.slice(0,10).forEach(h=>{
+      const d = document.createElement("div");
+      d.className = "item";
+      d.innerHTML = '<div class="l"><span>'+h.units+' adet • ⭐ '+h.quality+'</span><span class="t">'+h.time+'</span></div><div class="g">+'+fmt(h.earn)+'</div>';
+      el.history.appendChild(d);
+    });
+  }
+
+  function toast(msg){
+    el.toast.textContent = msg;
+    el.toast.classList.add("show");
+    clearTimeout(toast.t);
+    toast.t = setTimeout(()=>el.toast.classList.remove("show"), 2200);
+  }
+
+  function startProduction(){
+    if(producing) return;
+    producing = true;
+    el.machine.classList.add("running");
+    el.produce.textContent = "⏳ ÜRETİLİYOR...";
+    el.status.textContent = "Makineler çalışıyor...";
+    const start = performance.now();
+    render();
+
+    function tick(now){
+      const p = Math.min(1, (now - start) / PRODUCTION_MS);
+      el.bar.style.width = (p * 100) + "%";
+      el.status.textContent = "Üretim: %" + Math.floor(p * 100) + " • " + Math.max(0, Math.ceil((PRODUCTION_MS - (now-start))/1000)) + " sn";
+      if(p < 1) requestAnimationFrame(tick); else finishProduction();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function finishProduction(){
+    const q = Math.floor(minQuality() + Math.random() * (100 - minQuality() + 1));
+    const units = unitsPerBatch();
+    const earn = Math.round(units * UNIT_PRICE * (q / 100));
+    checkNewDay();
+    state.quality = q;
+    state.stock += units;
+    state.money += earn;
+    state.dailyProfit += earn;
+    state.history.unshift({
+      units, quality:q, earn,
+      time: new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})
+    });
+    state.history = state.history.slice(0,30);
+    producing = false;
+    el.machine.classList.remove("running");
+    el.produce.textContent = "▶ ÜRETİME BAŞLA";
+    el.bar.style.width = "0%";
+    el.status.textContent = "Üretim tamamlandı!";
+    save(); render();
+    toast("✅ +" + fmt(earn) + " (Kalite " + q + ")");
+    if(navigator.vibrate) navigator.vibrate(60);
+  }
+
+  function upgrade(){
+    const cost = upgradeCost();
+    if(producing || state.money < cost) return;
+    state.money -= cost;
+    state.level += 1;
+    save(); render();
+    toast("🔧 Makine geliştirildi! Seviye " + state.level);
+  }
+
+  function resetGame(){
+    if(!confirm("Tüm ilerleme silinsin mi?")) return;
+    state = defaults(); save(); render();
+    el.status.textContent = "Üretime hazır";
+  }
+
+  el.produce.addEventListener("click", startProduction);
+  el.upgrade.addEventListener("click", upgrade);
+  el.reset.addEventListener("click", resetGame);
+
+  render();
+})();
+</script>
+</body>
+</html>
