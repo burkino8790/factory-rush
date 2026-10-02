@@ -21,18 +21,28 @@
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
   .stat{background:var(--card);border-radius:16px;padding:14px;border:1px solid rgba(255,255,255,.06)}
   .stat .label{color:var(--muted);font-size:.78rem;margin-bottom:4px}
-  .stat .value{font-size:1.3rem;font-weight:800}
+  .stat .value{font-size:1.25rem;font-weight:800}
   .stat.wide{grid-column:span 2}
-  .money{color:var(--green)}
-  .profit{color:var(--blue)}
+  .money{color:var(--green)} .profit{color:var(--blue)} .neg{color:var(--red)}
+  .panel{background:var(--card);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.06)}
+  .panel h2{font-size:1rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+  .panel h2 small{color:var(--muted);font-weight:600;font-size:.75rem}
+  .market{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mbox{background:var(--card2);border-radius:12px;padding:10px;text-align:center}
+  .mbox .label{color:var(--muted);font-size:.72rem}
+  .mbox .value{font-size:1.15rem;font-weight:800;margin-top:2px}
+  .up{color:var(--green)} .down{color:var(--red)}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .opt{background:var(--card2);border:2px solid transparent;border-radius:14px;padding:12px 6px;text-align:center;
+    color:var(--text);font-weight:700;font-size:.85rem;min-height:68px;cursor:pointer;transition:.15s}
+  .opt small{display:block;color:var(--muted);font-weight:600;margin-top:3px;font-size:.7rem;line-height:1.3}
+  .opt.sel{border-color:var(--accent);background:#33291a}
+  .opt:disabled{opacity:.5}
+  .hint{color:var(--muted);font-size:.8rem;margin-top:10px;text-align:center;min-height:1.2em}
   .factory{background:var(--card);border-radius:20px;padding:18px;margin:6px 0 12px;text-align:center;border:1px solid rgba(255,255,255,.06)}
   .machine{font-size:4rem;display:inline-block;line-height:1}
   .machine.running{animation:shake .35s infinite}
   @keyframes shake{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-3deg)}75%{transform:translate(2px,-1px) rotate(3deg)}}
-  .gears{font-size:1.6rem;height:2rem;margin-top:4px}
-  .gears span{display:inline-block}
-  .running ~ .gears span{animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
   .progress{height:16px;background:#0b1220;border-radius:99px;overflow:hidden;margin-top:12px}
   .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}
   .status{margin-top:8px;color:var(--muted);font-size:.9rem;min-height:1.2em}
@@ -40,53 +50,73 @@
     font-family:inherit;transition:transform .08s,opacity .2s}
   button:active:not(:disabled){transform:scale(.97)}
   button:disabled{opacity:.45;cursor:not-allowed}
-  #produceBtn{padding:24px 12px;font-size:1.4rem;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  #produceBtn{padding:22px 12px;font-size:1.35rem;background:linear-gradient(135deg,var(--accent),var(--accent2));
     box-shadow:0 8px 24px rgba(245,158,11,.35);margin-bottom:10px;min-height:76px;color:#1a1100}
+  #produceBtn small{display:block;font-size:.8rem;font-weight:700;margin-top:3px;opacity:.8}
+  #sellBtn{padding:18px 12px;font-size:1.1rem;background:linear-gradient(135deg,#16a34a,#22c55e);min-height:64px;margin-top:10px}
   #upgradeBtn{padding:16px 12px;font-size:1.05rem;background:linear-gradient(135deg,#0ea5e9,#6366f1);
     box-shadow:0 6px 18px rgba(99,102,241,.3);min-height:64px;margin-bottom:14px}
   #upgradeBtn small{display:block;font-weight:600;opacity:.9;margin-top:3px;font-size:.8rem}
-  .history{background:var(--card);border-radius:18px;padding:14px;border:1px solid rgba(255,255,255,.06)}
-  .history h2{font-size:1rem;margin-bottom:10px}
   .item{display:flex;justify-content:space-between;align-items:center;background:var(--card2);
-    border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:.88rem;animation:pop .3s}
+    border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:.86rem;animation:pop .3s}
   @keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   .item .l{display:flex;flex-direction:column;gap:2px}
   .item .t{color:var(--muted);font-size:.72rem}
-  .item .g{color:var(--green);font-weight:800}
+  .item .g{font-weight:800;color:var(--green)}
   .empty{color:var(--muted);text-align:center;padding:10px;font-size:.9rem}
-  .reset{background:transparent;color:var(--muted);font-size:.8rem;font-weight:600;padding:12px;margin-top:10px}
+  .reset{background:transparent;color:var(--muted);font-size:.8rem;font-weight:600;padding:12px;margin-top:6px}
   #toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translate(-50%,40px);
     background:#0b1220;border:1px solid rgba(255,255,255,.15);padding:12px 18px;border-radius:14px;
-    opacity:0;transition:.3s;font-weight:700;pointer-events:none;max-width:90%;text-align:center}
+    opacity:0;transition:.3s;font-weight:700;pointer-events:none;max-width:90%;text-align:center;z-index:10}
   #toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
   <header>
     <h1>🏭 Factory Rush</h1>
-    <div class="sub">Fabrikanı kur, büyüt, kazan!</div>
+    <div class="sub">Doğru malzeme, doğru fiyat, doğru zaman!</div>
   </header>
 
   <div class="grid">
     <div class="stat wide"><div class="label">💰 Para</div><div class="value money" id="money">10.000 €</div></div>
-    <div class="stat"><div class="label">📦 Stok</div><div class="value" id="stock">0</div></div>
-    <div class="stat"><div class="label">⭐ Kalite</div><div class="value" id="quality">100</div></div>
+    <div class="stat"><div class="label">📦 Stok</div><div class="value" id="stock">0 / 40</div></div>
+    <div class="stat"><div class="label">⭐ Kalite (stok ort.)</div><div class="value" id="quality">100</div></div>
     <div class="stat"><div class="label">⚡ Üretim hızı</div><div class="value" id="speed">x1.0</div></div>
     <div class="stat"><div class="label">📈 Günlük kâr</div><div class="value profit" id="daily">0 €</div></div>
   </div>
 
+  <div class="panel">
+    <h2>📊 Pazar <small>her 12 sn değişir</small></h2>
+    <div class="market">
+      <div class="mbox"><div class="label">Fiyat çarpanı</div><div class="value" id="mPrice">x1.00</div></div>
+      <div class="mbox"><div class="label">Talep</div><div class="value" id="mDemand">Normal</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>🧱 Ham Madde <small>maliyet / adet</small></h2>
+    <div class="seg" id="matSeg"></div>
+  </div>
+
   <div class="factory">
     <div class="machine" id="machine">⚙️</div>
-    <div class="gears"><span>⚙️</span> <span>🔩</span> <span>⚙️</span></div>
     <div class="progress"><div class="bar" id="bar"></div></div>
     <div class="status" id="status">Üretime hazır</div>
   </div>
 
-  <button id="produceBtn">▶ ÜRETİME BAŞLA</button>
+  <button id="produceBtn">▶ ÜRETİME BAŞLA<small id="produceInfo"></small></button>
+
+  <div class="panel">
+    <h2>🏷️ Satış Fiyatı</h2>
+    <div class="seg" id="prSeg"></div>
+    <div class="hint" id="sellHint"></div>
+    <button id="sellBtn">💶 STOĞU SAT</button>
+  </div>
+
   <button id="upgradeBtn">🔧 Makineyi Geliştir<small id="upgradeInfo"></small></button>
 
-  <div class="history">
-    <h2>📜 Üretim Geçmişi</h2>
+  <div class="panel">
+    <h2>📜 Geçmiş</h2>
     <div id="history"></div>
   </div>
 
@@ -95,64 +125,142 @@
 
 <script>
 (function(){
-  const SAVE_KEY = "factoryRushSave_v1";
+  const SAVE_KEY = "factoryRushSave_v2";
   const PRODUCTION_MS = 5000;
-  const UNIT_PRICE = 20;
+  const BASE_PRICE = 40;
   const BASE_UNITS = 10;
+  const BASE_CAP = 40;
 
+  const MATERIALS = [
+    {id:0, name:"Ekonomik", cost:5,  min:45, max:70,  note:"Ucuz • Kalite 45-70"},
+    {id:1, name:"Standart", cost:9,  min:65, max:90,  note:"Dengeli • Kalite 65-90"},
+    {id:2, name:"Premium",  cost:15, min:85, max:100, note:"Pahalı • Kalite 85-100"}
+  ];
+  const PRICES = [
+    {id:0, name:"Ucuz",   price:0.8,  sell:0.90, note:"x0.8 fiyat<br>Çok satılır"},
+    {id:1, name:"Normal", price:1.0,  sell:0.70, note:"x1.0 fiyat<br>Orta satış"},
+    {id:2, name:"Pahalı", price:1.35, sell:0.50, note:"x1.35 fiyat<br>Az satılır"}
+  ];
+
+  const today = () => new Date().toISOString().slice(0,10);
   const defaults = () => ({
-    money: 10000, stock: 0, quality: 100, level: 1,
-    history: [], dailyProfit: 0, dailyDate: today()
+    money:10000, stock:0, stockQ:100, level:1, mat:1, pr:1,
+    history:[], dailyProfit:0, dailyDate:today(),
+    market:{price:1, demand:1, prevPrice:1}
   });
-
-  function today(){ return new Date().toISOString().slice(0,10); }
-
-  let state = load();
-  let producing = false;
-
-  const $ = id => document.getElementById(id);
-  const el = {
-    money:$("money"), stock:$("stock"), quality:$("quality"), speed:$("speed"), daily:$("daily"),
-    bar:$("bar"), status:$("status"), machine:$("machine"), produce:$("produceBtn"),
-    upgrade:$("upgradeBtn"), upInfo:$("upgradeInfo"), history:$("history"), toast:$("toast"), reset:$("resetBtn")
-  };
 
   function load(){
     try{
       const s = JSON.parse(localStorage.getItem(SAVE_KEY));
-      if(s && typeof s.money === "number") return Object.assign(defaults(), s);
+      if(s && typeof s.money === "number"){
+        const d = defaults();
+        return Object.assign(d, s, {market:Object.assign(d.market, s.market||{})});
+      }
     }catch(e){}
     return defaults();
   }
-  function save(){
-    try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){}
-  }
+  function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){} }
 
+  let state = load();
+  let busy = false;
+
+  const $ = id => document.getElementById(id);
+  const el = {
+    money:$("money"), stock:$("stock"), quality:$("quality"), speed:$("speed"), daily:$("daily"),
+    mPrice:$("mPrice"), mDemand:$("mDemand"), matSeg:$("matSeg"), prSeg:$("prSeg"),
+    bar:$("bar"), status:$("status"), machine:$("machine"),
+    produce:$("produceBtn"), produceInfo:$("produceInfo"),
+    sell:$("sellBtn"), sellHint:$("sellHint"),
+    upgrade:$("upgradeBtn"), upInfo:$("upgradeInfo"),
+    history:$("history"), toast:$("toast"), reset:$("resetBtn")
+  };
+
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
   const fmt = n => Math.round(n).toLocaleString("tr-TR") + " €";
+  const fmtSigned = n => (n>0?"+":"") + fmt(n);
+  const capacity = () => BASE_CAP * state.level;
+  const units = () => BASE_UNITS * state.level;
   const upgradeCost = () => Math.round(1000 * Math.pow(1.6, state.level - 1));
-  const unitsPerBatch = () => BASE_UNITS * state.level;
-  const minQuality = () => Math.min(95, 60 + (state.level - 1) * 4);
+  const productionCost = () => units() * MATERIALS[state.mat].cost;
+  const levelBonus = () => (state.level - 1) * 2;
 
   function checkNewDay(){
     if(state.dailyDate !== today()){ state.dailyDate = today(); state.dailyProfit = 0; }
   }
 
+  function sellEstimate(){
+    const p = PRICES[state.pr];
+    const unitPrice = BASE_PRICE * state.market.price * p.price * (0.5 + state.stockQ/200);
+    const frac = clamp(p.sell * state.market.demand + (state.stockQ - 75)/300, 0.1, 1);
+    return {unitPrice, frac};
+  }
+
+  function buildSegs(){
+    el.matSeg.innerHTML = "";
+    MATERIALS.forEach(m=>{
+      const b = document.createElement("button");
+      b.className = "opt"; b.dataset.id = m.id;
+      b.innerHTML = m.name + '<small>' + m.cost + ' €/adet<br>' + m.note.split("•")[1].trim() + '</small>';
+      b.addEventListener("click", ()=>{ if(busy) return; state.mat = m.id; save(); render(); });
+      el.matSeg.appendChild(b);
+    });
+    el.prSeg.innerHTML = "";
+    PRICES.forEach(p=>{
+      const b = document.createElement("button");
+      b.className = "opt"; b.dataset.id = p.id;
+      b.innerHTML = p.name + '<small>' + p.note + '</small>';
+      b.addEventListener("click", ()=>{ if(busy) return; state.pr = p.id; save(); render(); });
+      el.prSeg.appendChild(b);
+    });
+  }
+
+  function demandLabel(d){ return d < 0.85 ? "Düşük 🔻" : d < 1.15 ? "Normal ➖" : "Yüksek 🔺"; }
+
   function render(){
     checkNewDay();
     el.money.textContent = fmt(state.money);
-    el.stock.textContent = state.stock.toLocaleString("tr-TR");
-    el.quality.textContent = state.quality;
+    el.stock.textContent = state.stock + " / " + capacity();
+    el.quality.textContent = state.stock > 0 ? Math.round(state.stockQ) : "-";
     el.speed.textContent = "x" + state.level.toFixed(1);
-    el.daily.textContent = fmt(state.dailyProfit);
-    const cost = upgradeCost();
-    el.upInfo.textContent = "Seviye " + state.level + " → " + (state.level+1) + " • " + fmt(cost);
-    el.upgrade.disabled = producing || state.money < cost;
-    el.produce.disabled = producing;
-    el.history.innerHTML = state.history.length ? "" : '<div class="empty">Henüz üretim yapılmadı</div>';
-    state.history.slice(0,10).forEach(h=>{
+    el.daily.textContent = fmtSigned(state.dailyProfit);
+    el.daily.className = "value " + (state.dailyProfit < 0 ? "neg" : "profit");
+
+    const m = state.market;
+    const diff = m.price - m.prevPrice;
+    el.mPrice.textContent = "x" + m.price.toFixed(2) + (diff > 0.005 ? " ▲" : diff < -0.005 ? " ▼" : "");
+    el.mPrice.className = "value " + (diff > 0.005 ? "up" : diff < -0.005 ? "down" : "");
+    el.mDemand.textContent = demandLabel(m.demand);
+    el.mDemand.className = "value " + (m.demand >= 1.15 ? "up" : m.demand < 0.85 ? "down" : "");
+
+    [...el.matSeg.children].forEach(b=>b.classList.toggle("sel", +b.dataset.id === state.mat));
+    [...el.prSeg.children].forEach(b=>b.classList.toggle("sel", +b.dataset.id === state.pr));
+    [...el.matSeg.children, ...el.prSeg.children].forEach(b=>b.disabled = busy);
+
+    const cost = productionCost();
+    const full = state.stock + units() > capacity();
+    const poor = state.money < cost;
+    el.produceInfo.textContent = full ? "Stok dolu! Önce sat" : poor ? "Yetersiz para" : "Maliyet: " + fmt(cost) + " • +" + units() + " adet";
+    el.produce.disabled = busy || full || poor;
+
+    const est = sellEstimate();
+    el.sellHint.textContent = state.stock > 0
+      ? "≈ " + est.unitPrice.toFixed(1) + " €/adet • tahmini satış oranı %" + Math.round(est.frac*100)
+      : "Satacak stok yok";
+    el.sell.disabled = busy || state.stock <= 0;
+
+    const uc = upgradeCost();
+    el.upInfo.textContent = "Seviye " + state.level + " → " + (state.level+1) + " • " + fmt(uc) + " • Üretim ve depo artar";
+    el.upgrade.disabled = busy || state.money < uc;
+
+    el.history.innerHTML = state.history.length ? "" : '<div class="empty">Henüz işlem yok</div>';
+    state.history.slice(0,12).forEach(h=>{
       const d = document.createElement("div");
       d.className = "item";
-      d.innerHTML = '<div class="l"><span>'+h.units+' adet • ⭐ '+h.quality+'</span><span class="t">'+h.time+'</span></div><div class="g">+'+fmt(h.earn)+'</div>';
+      const isProd = h.type === "prod";
+      d.innerHTML = '<div class="l"><span>' + (isProd ? "🏭 Üretim: " + h.units + " adet • ⭐ " + h.quality + " (" + h.mat + ")"
+                                                      : "💶 Satış: " + h.units + " adet • " + h.price.toFixed(1) + " €/adet") +
+                    '</span><span class="t">' + h.time + '</span></div>' +
+                    '<div class="g ' + (h.amount < 0 ? "neg" : "") + '">' + fmtSigned(h.amount) + '</div>';
       el.history.appendChild(d);
     });
   }
@@ -161,70 +269,96 @@
     el.toast.textContent = msg;
     el.toast.classList.add("show");
     clearTimeout(toast.t);
-    toast.t = setTimeout(()=>el.toast.classList.remove("show"), 2200);
+    toast.t = setTimeout(()=>el.toast.classList.remove("show"), 2400);
   }
+  const nowStr = () => new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
+  function log(entry){ entry.time = nowStr(); state.history.unshift(entry); state.history = state.history.slice(0,30); }
 
   function startProduction(){
-    if(producing) return;
-    producing = true;
+    if(busy) return;
+    const cost = productionCost();
+    if(state.money < cost || state.stock + units() > capacity()) return;
+    checkNewDay();
+    state.money -= cost;
+    state.dailyProfit -= cost;
+    busy = true;
     el.machine.classList.add("running");
-    el.produce.textContent = "⏳ ÜRETİLİYOR...";
-    el.status.textContent = "Makineler çalışıyor...";
-    const start = performance.now();
+    el.produce.firstChild.textContent = "⏳ ÜRETİLİYOR...";
     render();
-
+    const start = performance.now();
     function tick(now){
       const p = Math.min(1, (now - start) / PRODUCTION_MS);
-      el.bar.style.width = (p * 100) + "%";
-      el.status.textContent = "Üretim: %" + Math.floor(p * 100) + " • " + Math.max(0, Math.ceil((PRODUCTION_MS - (now-start))/1000)) + " sn";
-      if(p < 1) requestAnimationFrame(tick); else finishProduction();
+      el.bar.style.width = (p*100) + "%";
+      el.status.textContent = "Üretim: %" + Math.floor(p*100) + " • " + Math.max(0, Math.ceil((PRODUCTION_MS-(now-start))/1000)) + " sn";
+      if(p < 1) requestAnimationFrame(tick); else finishProduction(cost);
     }
     requestAnimationFrame(tick);
   }
 
-  function finishProduction(){
-    const q = Math.floor(minQuality() + Math.random() * (100 - minQuality() + 1));
-    const units = unitsPerBatch();
-    const earn = Math.round(units * UNIT_PRICE * (q / 100));
-    checkNewDay();
-    state.quality = q;
-    state.stock += units;
-    state.money += earn;
-    state.dailyProfit += earn;
-    state.history.unshift({
-      units, quality:q, earn,
-      time: new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})
-    });
-    state.history = state.history.slice(0,30);
-    producing = false;
+  function finishProduction(cost){
+    const m = MATERIALS[state.mat];
+    const lo = clamp(m.min + levelBonus(), 0, 100), hi = clamp(m.max + levelBonus(), 0, 100);
+    const q = Math.floor(lo + Math.random() * (hi - lo + 1));
+    const n = units();
+    state.stockQ = (state.stock * state.stockQ + n * q) / (state.stock + n);
+    state.stock += n;
+    log({type:"prod", units:n, quality:q, mat:m.name, amount:-cost});
+    busy = false;
     el.machine.classList.remove("running");
-    el.produce.textContent = "▶ ÜRETİME BAŞLA";
+    el.produce.firstChild.textContent = "▶ ÜRETİME BAŞLA";
     el.bar.style.width = "0%";
-    el.status.textContent = "Üretim tamamlandı!";
+    el.status.textContent = "Üretim tamamlandı! Kalite: " + q;
     save(); render();
-    toast("✅ +" + fmt(earn) + " (Kalite " + q + ")");
+    toast("✅ " + n + " adet üretildi • Kalite " + q);
     if(navigator.vibrate) navigator.vibrate(60);
   }
 
+  function sellStock(){
+    if(busy || state.stock <= 0) return;
+    const est = sellEstimate();
+    const frac = clamp(est.frac * (0.85 + Math.random()*0.3), 0.1, 1);
+    const sold = clamp(Math.round(state.stock * frac), 1, state.stock);
+    const revenue = Math.round(sold * est.unitPrice);
+    checkNewDay();
+    state.stock -= sold;
+    state.money += revenue;
+    state.dailyProfit += revenue;
+    state.market.demand = Math.max(0.6, state.market.demand - 0.1);
+    log({type:"sale", units:sold, price:est.unitPrice, amount:revenue});
+    save(); render();
+    toast("💶 " + sold + " adet satıldı • " + fmtSigned(revenue) + (state.stock>0 ? " • " + state.stock + " adet kaldı" : ""));
+    if(navigator.vibrate) navigator.vibrate(40);
+  }
+
   function upgrade(){
-    const cost = upgradeCost();
-    if(producing || state.money < cost) return;
-    state.money -= cost;
+    const c = upgradeCost();
+    if(busy || state.money < c) return;
+    state.money -= c;
     state.level += 1;
     save(); render();
     toast("🔧 Makine geliştirildi! Seviye " + state.level);
   }
 
+  function marketTick(){
+    const m = state.market;
+    m.prevPrice = m.price;
+    m.price = clamp(m.price + (Math.random()-0.5)*0.3 + (1 - m.price)*0.1, 0.7, 1.5);
+    m.demand = clamp(m.demand + (Math.random()-0.5)*0.35 + (1 - m.demand)*0.1, 0.6, 1.4);
+    save(); render();
+  }
+
   function resetGame(){
     if(!confirm("Tüm ilerleme silinsin mi?")) return;
-    state = defaults(); save(); render();
+    state = defaults(); busy = false; save(); render();
     el.status.textContent = "Üretime hazır";
   }
 
+  buildSegs();
   el.produce.addEventListener("click", startProduction);
+  el.sell.addEventListener("click", sellStock);
   el.upgrade.addEventListener("click", upgrade);
   el.reset.addEventListener("click", resetGame);
-
+  setInterval(marketTick, 12000);
   render();
 })();
 </script>
